@@ -1,0 +1,16 @@
+<launch>
+	<!-- <include file="$(find cloudrobo)/launch/cloudrobo.launch" /> -->
+	<!-- Args -->
+	<arg name="gui" default="false" />
+    <arg name="rvizconfig" default="$(find officebot_description)/rviz/officebot_model.rviz" />
+	<arg name="model" default="$(find officebot_description)/urdf/officebot.xacro" />
+	<!-- Params -->
+	<param name="use_gui" value="$(arg gui)" />
+	<!-- Robot Description from URDF -->
+	<param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)"/>
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen" />
+	<include file="$(find ros_wheel_base)/launch/ros_wheel_base.launch" />
+	<include file="$(find officebot_control)/launch/officebot_control.launch" />
+	<include file="$(find ros_ddsm115_driver)/launch/ros_ddsm115_driver.launch" />
+</launch>

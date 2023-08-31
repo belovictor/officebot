@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="officebot"
+	xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<!-- Matherials -->
+	<xacro:include filename="$(find officebot_description)/urdf/officebot_materials.xacro" />
+    <!-- Gazebo parameters -->
+    <xacro:include filename="$(find officebot_description)/urdf/officebot.gazebo" />
+    <xacro:property name="clearance" value="0.100" />
+    <xacro:property name="body_height" value="0.17" />
+    <xacro:property name="wheel_radius" value="0.05835"/>
+    <xacro:property name="wheel_separation" value="0.20"/>
+    <xacro:property name="wheel_distance" value="0.125"/>
+    <xacro:property name="wheel_width" value="0.043"/>
+    <xacro:property name="wheel_marker_length" value="0.03"/>
+    <xacro:property name="wheel_marker_width" value="0.005"/>
+    <xacro:property name="mass" value="0.1"/>
+    <xacro:property name="wheel_mass" value="0.2"/>
+    <xacro:property name="marker_mass" value="0.0"/>
+    <xacro:property name="inertia" value="0.3"/>
+    <xacro:property name="PI" value="3.1415926"/>
+    <xacro:property name="wheel_ixx" value="${wheel_mass*(3*wheel_radius*wheel_radius+wheel_width*wheel_width)/12}" />
+    <xacro:property name="wheel_ixy" value="0.0" />
+    <xacro:property name="wheel_ixz" value="0.0" />
+    <xacro:property name="wheel_iyy" value="${wheel_mass*(3*wheel_radius*wheel_radius+wheel_width*wheel_width)/12}" />
+    <xacro:property name="wheel_iyz" value="0.0" />
+    <xacro:property name="wheel_izz" value="${wheel_mass*wheel_radius*wheel_radius/2}" />
+	<!-- officebot_base -->
+    <link name="base_link">
+    </link>
+	<link name="body_link">
+		<visual>
+			<origin xyz="0 0 -0.015" rpy="${PI/2} 0 ${PI/2}" />
+            <geometry>
+                <mesh filename="package://officebot_description/meshes/officebot_body_link.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+			<material name="White" />
+		</visual>
+		<collision>
+			<origin xyz="0 0 -0.015" rpy="${PI/2} 0 ${PI/2}" />
+            <geometry>
+                <mesh filename="package://officebot_description/meshes/officebot_body_link.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+		</collision>
+        <inertial>
+            <origin xyz="0 0 ${clearance}" rpy="0 0 0" />
+            <mass value="${mass}" />
+            <inertia ixx="${inertia}" ixy="0.0" ixz="0.0" iyy="${inertia}" iyz="0.0" izz="${inertia}" />
+        </inertial>
+	</link>
+    <joint name="base_to_body" type="fixed">
+        <axis rpy="0 0 0" xyz="0 0 0"/>
+        <parent link="base_link" />
+        <child link="body_link" />
+        <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+    </joint>
+    <!-- Lidar -->
+    <link name="rplidar_link">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.1" />
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="0.035" length="0.039"/>
+            </geometry>
+            <material name="Blue" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="0.035" length="0.025"/>
+            </geometry>
+        </collision>
+    </link>
+    <joint name="joint_sensor_laser" type="fixed">
+        <origin xyz="0 0 0.120" rpy="0 0 ${PI}"/>
+        <parent link="body_link"/>
+        <child link="rplidar_link"/>
+    </joint>
+    <!-- Camera-->
+    <link name="camera_link">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.1" />
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="0.010 0.010 0.010" />
+            </geometry>
+            <material name="Green" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.010 0.010 0.010" />
+            </geometry>
+        </collision>
+    </link>
+    <!--    <xacro:sensor_d435 name="camera" topics_ns="camera" parent="body_link" publish_pointcloud="true">
+        <origin xyz="0.330 0 0.035" rpy="0 0 0"/>
+    </xacro:sensor_d435> -->
+    <joint name="joint_sensor_camera" type="fixed">
+        <parent link="body_link"/>
+        <child link="camera_link"/>
+        <origin xyz="0.330 0 0.035" rpy="0 0 0"/>
+    </joint>
+    <!-- Wheels -->
+    <link name="rear_left_wheel">
+        <visual>
+			<origin xyz="0 0 0" rpy="${PI / 2} 0 0" />
+            <geometry>
+                <cylinder length="${wheel_width}" radius="${wheel_radius}"/>
+            </geometry>
+            <material name="Red" />
+        </visual>
+        <collision>
+			<origin xyz="0 0 0" rpy="${PI / 2} 0 0" />
+            <geometry>
+                <cylinder length="${wheel_width}" radius="${wheel_radius}"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="${wheel_mass}" />
+            <inertia ixx="${wheel_ixx}" ixy="${wheel_ixy}" ixz="${wheel_ixz}" iyy="${wheel_iyy}" iyz="${wheel_iyz}" izz="${wheel_izz}" />
+        </inertial>
+    </link>
+    <link name="rear_left_wheel_marker">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="${wheel_marker_length} ${wheel_marker_width} ${wheel_marker_width}" />
+            </geometry>
+            <material name="White" />
+        </visual>
+        <inertial>
+            <mass value="${marker_mass}" />
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0" />
+        </inertial>
+    </link>
+    <link name="rear_right_wheel">
+        <visual>
+			<origin xyz="0 0 0" rpy="${PI / 2} 0 0" />
+            <geometry>
+                <cylinder length="${wheel_width}" radius="${wheel_radius}"/>
+            </geometry>
+            <material name="Red" />
+        </visual>
+        <collision>
+			<origin xyz="0 0 0" rpy="${PI / 2} 0 0" />
+            <geometry>
+                <cylinder length="${wheel_width}" radius="${wheel_radius}"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="${wheel_mass}" />
+            <inertia ixx="${wheel_ixx}" ixy="${wheel_ixy}" ixz="${wheel_ixz}" iyy="${wheel_iyy}" iyz="${wheel_iyz}" izz="${wheel_izz}" />
+        </inertial>
+    </link>
+    <link name="rear_right_wheel_marker">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="${wheel_marker_length} ${wheel_marker_width} ${wheel_marker_width}" />
+            </geometry>
+            <material name="White" />
+        </visual>
+        <inertial>
+            <mass value="${marker_mass}" />
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0" />
+        </inertial>
+    </link>
+    <link name="front_left_wheel">
+        <visual>
+			<origin xyz="0 0 0" rpy="${PI / 2} 0 0" />
+            <geometry>
+                <cylinder length="${wheel_width}" radius="${wheel_radius}"/>
+            </geometry>
+            <material name="Red" />
+        </visual>
+        <collision>
+			<origin xyz="0 0 0" rpy="${PI / 2} 0 0" />
+            <geometry>
+                <cylinder length="${wheel_width}" radius="${wheel_radius}"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="${wheel_mass}" />
+            <inertia ixx="${wheel_ixx}" ixy="${wheel_ixy}" ixz="${wheel_ixz}" iyy="${wheel_iyy}" iyz="${wheel_iyz}" izz="${wheel_izz}" />
+        </inertial>
+    </link>
+    <link name="front_left_wheel_marker">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="${wheel_marker_length} ${wheel_marker_width} ${wheel_marker_width}" />
+            </geometry>
+            <material name="White" />
+        </visual>
+        <inertial>
+            <mass value="${marker_mass}" />
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0" />
+        </inertial>
+    </link>
+    <link name="front_right_wheel">
+        <visual>
+			<origin xyz="0 0 0" rpy="${PI / 2} 0 0" />
+            <geometry>
+                <cylinder length="${wheel_width}" radius="${wheel_radius}"/>
+            </geometry>
+            <material name="Red" />
+        </visual>
+        <collision>
+			<origin xyz="0 0 0" rpy="${PI / 2} 0 0" />
+            <geometry>
+                <cylinder length="${wheel_width}" radius="${wheel_radius}"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="${wheel_mass}" />
+            <inertia ixx="${wheel_ixx}" ixy="${wheel_ixy}" ixz="${wheel_ixz}" iyy="${wheel_iyy}" iyz="${wheel_iyz}" izz="${wheel_izz}" />
+        </inertial>
+    </link>
+    <link name="front_right_wheel_marker">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="${wheel_marker_length} ${wheel_marker_width} ${wheel_marker_width}" />
+            </geometry>
+            <material name="White" />
+        </visual>
+        <inertial>
+            <mass value="${marker_mass}" />
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0" />
+        </inertial>
+    </link>
+    <joint name="base_to_rear_left_wheel" type="continuous">
+        <axis rpy="0 0 0" xyz="0 1 0"/>
+        <parent link="body_link" />
+        <child link="rear_left_wheel" />
+        <origin xyz="-${wheel_distance} ${wheel_separation/2 + wheel_width/2} 0" rpy="0 0 0"/>
+        <dynamics damping="0.0" friction="0.0"/>
+        <limit effort= "100" velocity="100"/>
+    </joint>
+    <joint name="base_to_rear_right_wheel" type="continuous">
+        <axis rpy="0 0 0" xyz="0 1 0"/>
+        <parent link="body_link" />
+        <child link="rear_right_wheel" />
+		<origin xyz="-${wheel_distance} ${-1 * (wheel_separation/2 + wheel_width/2)} 0" rpy="0 0 0"/>
+        <dynamics damping="0.0" friction="0.0"/>
+        <limit effort= "100" velocity="100"/>
+    </joint>
+    <joint name="base_to_front_left_wheel" type="continuous">
+        <axis rpy="0 0 0" xyz="0 1 0"/>
+        <parent link="body_link" />
+        <child link="front_left_wheel" />
+		<origin xyz="${wheel_distance} ${wheel_separation/2 + wheel_width/2} 0" rpy="0 0 0" />
+        <dynamics damping="0.0" friction="0.0"/>
+        <limit effort= "100" velocity="100"/>
+    </joint>
+    <joint name="base_to_front_right_wheel" type="continuous">
+        <axis rpy="0 0 0" xyz="0 1 0"/>
+        <parent link="body_link" />
+        <child link="front_right_wheel" />
+		<origin xyz="${wheel_distance} ${-1 * (wheel_separation/2 + wheel_width/2)} 0" rpy="0 0 0" />
+        <dynamics damping="0.0" friction="0.0"/>
+        <limit effort= "100" velocity="100"/>
+    </joint>
+    <joint name="rear_left_wheel_to_marker" type="fixed">
+        <parent link="rear_left_wheel" />
+        <child link="rear_left_wheel_marker" />
+        <origin xyz="${wheel_radius - wheel_marker_length / 2} ${wheel_width / 2 + wheel_marker_width / 2} 0" rpy="0 0 0" />
+    </joint>
+    <joint name="rear_right_wheel_to_marker" type="fixed">
+        <parent link="rear_right_wheel" />
+        <child link="rear_right_wheel_marker" />
+        <origin xyz="${wheel_radius - wheel_marker_length / 2} -${wheel_width / 2 + wheel_marker_width / 2} 0" rpy="0 0 0" />
+    </joint>
+    <joint name="front_left_wheel_to_marker" type="fixed">
+        <parent link="front_left_wheel" />
+        <child link="front_left_wheel_marker" />
+        <origin xyz="${wheel_radius - wheel_marker_length / 2} ${wheel_width / 2 + wheel_marker_width / 2} 0" rpy="0 0 0" />
+    </joint>
+    <joint name="front_right_wheel_to_marker" type="fixed">
+        <parent link="front_right_wheel" />
+        <child link="front_right_wheel_marker" />
+        <origin xyz="${wheel_radius - wheel_marker_length / 2} -${wheel_width / 2 + wheel_marker_width / 2} 0" rpy="0 0 0" />
+    </joint>
+</robot>

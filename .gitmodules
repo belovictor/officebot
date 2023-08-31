@@ -1,0 +1,6 @@
+[submodule "ros_wheel_base"]
+	path = ros_wheel_base
+	url = https://github.com/belovictor/ros_wheel_base.git
+[submodule "ros_ddsm115_driver"]
+	path = ros_ddsm115_driver
+	url = https://github.com/belovictor/ros_ddsm115_driver.git

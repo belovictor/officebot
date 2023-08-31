@@ -1,0 +1,219 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+		<!-- <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" /> -->
+    <xacro:property name="lateral_friction" value="1.0" />
+    <xacro:property name="spinning_friction" value="0.1" />
+    <xacro:property name="contact_stiffness" value="10000000.0" />
+    <xacro:property name="contact_damping" value="1.0" />
+    <!-- ros_control plugin -->
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/</robotNamespace>
+            <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+        </plugin>
+    </gazebo>
+    <!-- Camera -->
+    <!-- <gazebo reference="camera_link">
+        <sensor type="camera" name="camera1">
+            <update_rate>30.0</update_rate>
+            <camera name="head">
+                <horizontal_fov>1.3962634</horizontal_fov>
+                <image>
+                    <width>800</width>
+                    <height>800</height>
+                    <format>R8G8B8</format>
+                </image>
+                <clip>
+                    <near>0.02</near>
+                    <far>300</far>
+                </clip>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.007</stddev>
+                </noise>
+            </camera>
+            <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+                <alwaysOn>true</alwaysOn>
+                <updateRate>0.0</updateRate>
+                <cameraName>camera1</cameraName>
+                <imageTopicName>image_raw</imageTopicName>
+                <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+                <frameName>camera_link</frameName>
+                <hackBaseline>0.07</hackBaseline>
+                <distortionK1>0.0</distortionK1>
+                <distortionK2>0.0</distortionK2>
+                <distortionK3>0.0</distortionK3>
+                <distortionT1>0.0</distortionT1>
+                <distortionT2>0.0</distortionT2>
+            </plugin>
+        </sensor>
+    </gazebo> -->
+    <gazebo reference="camera_link">
+	    <!--    <xacro:sensor_d435 name="camera" topics_ns="camera" parent="body_link" publish_pointcloud="true">
+            <origin xyz="0 0 0" rpy="0 0 0" />
+	    </xacro:sensor_d435> -->
+    </gazebo>
+    <!-- transmissions -->
+    <transmission name="rear_left_wheel">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="base_to_rear_left_wheel">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="rear_left_motor">
+            <hardwareInterface>EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="rear_right_wheel">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="base_to_rear_right_wheel">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="rear_right_motor">
+            <hardwareInterface>EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="front_left_wheel">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="base_to_front_left_wheel">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="front_left_motor">
+            <hardwareInterface>EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="front_right_wheel">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="base_to_front_right_wheel">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="front_right_motor">
+            <hardwareInterface>EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <!-- joint_state_publisher plugin -->
+    <gazebo>
+        <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
+            <robotNamespace>/</robotNamespace>
+            <jointName>base_to_rear_left_wheel, base_to_rear_right_wheel, base_to_front_left_wheel, base_to_front_right_wheel</jointName>
+            <updateRate>100</updateRate>
+        </plugin>
+    </gazebo>
+    <!-- wheel joints plugin -->    
+    <gazebo reference="base_to_rear_left_wheel">
+        <provideFeedback>true</provideFeedback>
+    </gazebo>
+    <gazebo reference="base_to_rear_right_wheel">
+        <provideFeedback>true</provideFeedback>
+    </gazebo>
+    <gazebo reference="base_to_front_left_wheel">
+        <provideFeedback>true</provideFeedback>
+    </gazebo>
+    <gazebo reference="base_to_front_right_wheel">
+        <provideFeedback>true</provideFeedback>
+    </gazebo>
+    <!-- DiffDrivePlugin6W plugin -->
+    <gazebo>
+       <plugin name="skid_steer_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
+            <rosDebugLevel>Debug</rosDebugLevel>
+            <updateRate>10.0</updateRate>
+            <leftFrontJoint>base_to_front_left_wheel</leftFrontJoint>
+            <leftRearJoint>base_to_rear_left_wheel</leftRearJoint>
+            <rightFrontJoint>base_to_front_right_wheel</rightFrontJoint>
+            <rightRearJoint>base_to_rear_right_wheel</rightRearJoint>
+            <wheelSeparation>0.172</wheelSeparation>
+            <wheelDiameter>0.216</wheelDiameter>
+            <torque>10</torque>
+            <MaxForce>5.0</MaxForce>
+            <commandTopic>cmd_vel</commandTopic>
+            <odometryTopic>odom</odometryTopic>
+            <odometryFrame>odom</odometryFrame>
+            <odometrySource>world</odometrySource>
+            <robotBaseFrame>base_link</robotBaseFrame>
+            <broadcastTF>true</broadcastTF>
+            <publishTf>true</publishTf>
+            <publishWheelTF>true</publishWheelTF>
+            <publishWheelJointState>true</publishWheelJointState>
+            <publishOdomTF>true</publishOdomTF>
+        </plugin>
+        <!-- <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+            <alwaysOn>true</alwaysOn>
+            <legacyMode>false</legacyMode>
+            <publishTf>true</publishTf>
+            <publishWheelTF>true</publishWheelTF>
+            <publishWheelJointState>true</publishWheelJointState>
+            <publishOdomTF>true</publishOdomTF>
+            <updateRate>10</updateRate>
+            <leftJoint>["base_to_front_left_wheel", "base_to_rear_left_wheel"]</leftJoint>
+            <rightJoint>["base_to_front_right_wheel", "base_to_rear_right_wheel"]</rightJoint>
+            <wheelSeparation>0.172</wheelSeparation>
+            <wheelDiameter>0.216</wheelDiameter>
+            <torque>10</torque>
+            <commandTopic>cmd_vel</commandTopic>
+            <odometryTopic>odom</odometryTopic>
+            <odometryFrame>odom</odometryFrame>
+            <odometrySource>world</odometrySource>
+            <robotBaseFrame>base_link</robotBaseFrame>
+        </plugin> -->
+    </gazebo>
+    <!-- robot body -->
+    <gazebo reference="base_link">
+        <material>Gazebo/White</material>
+    </gazebo>
+    <gazebo reference="body_link">
+        <material>Gazebo/White</material>
+    </gazebo>
+    <!-- wheels -->
+    <gazebo reference="rear_left_wheel">
+        <mu1 value="${lateral_friction}" />
+        <mu2 value="${spinning_friction}" />
+        <kp value="${contact_stiffness}" />
+        <kd value="${contact_damping}" />
+        <fdir1 value="1 0 0"/>
+        <minDepth>0</minDepth>
+        <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="rear_right_wheel">
+        <mu1 value="${lateral_friction}" />
+        <mu2 value="${spinning_friction}" />
+        <kp value="${contact_stiffness}" />
+        <kd value="${contact_damping}" />
+        <fdir1 value="1 0 0"/>
+        <minDepth>0</minDepth>
+        <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="front_left_wheel">
+        <mu1 value="${lateral_friction}" />
+        <mu2 value="${spinning_friction}" />
+        <kp value="${contact_stiffness}" />
+        <kd value="${contact_damping}" />
+        <fdir1 value="1 0 0"/>
+        <minDepth>0</minDepth>
+        <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="front_right_wheel">
+        <mu1 value="${lateral_friction}" />
+        <mu2 value="${spinning_friction}" />
+        <kp value="${contact_stiffness}" />
+        <kd value="${contact_damping}" />
+        <fdir1 value="1 0 0"/>
+        <minDepth>0</minDepth>
+        <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="rear_left_wheel_marker">
+        <material>Gazebo/White</material>
+    </gazebo>
+    <gazebo reference="rear_right_wheel_marker">
+        <material>Gazebo/White</material>
+    </gazebo>
+    <gazebo reference="front_left_wheel_marker">
+        <material>Gazebo/White</material>
+    </gazebo>
+    <gazebo reference="front_right_wheel_marker">
+        <material>Gazebo/White</material>
+    </gazebo>
+</robot>
