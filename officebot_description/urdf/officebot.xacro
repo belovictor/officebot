@@ -75,8 +75,8 @@
         </collision>
     </link>
     <joint name="joint_sensor_laser" type="fixed">
-    <!-- ${PI} -->
-        <origin xyz="0.130 0.0 0.214" rpy="0 ${PI * 0.25} 0"/>
+    <!-- ${PI} ${PI * -0.375} -->
+	    <origin xyz="0.130 0.0 0.214" rpy="0 ${PI * 0.25} 0"/>
         <parent link="body_link"/>
         <child link="unilidar_lidar"/>
     </joint>
