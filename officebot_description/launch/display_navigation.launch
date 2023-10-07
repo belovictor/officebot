@@ -1,14 +1,12 @@
 <launch>
 	<!-- Args -->
 	<arg name="gui" default="false" />
-    <arg name="rvizconfig" default="$(find streetbot4_description)/rviz/streetbot4_navigation.rviz" />
-	<arg name="model" default="$(find streetbot4_description)/urdf/streetbot4.xacro" />
+    <arg name="rvizconfig" default="$(find officebot_description)/rviz/officebot_navigation.rviz" />
+	<arg name="model" default="$(find officebot_description)/urdf/officebot.xacro" />
 	<!-- Params -->
 	<param name="use_gui" value="$(arg gui)" />
 	<!-- Robot Description from URDF -->
 	<param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)" />
-	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
-	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 	<!-- Rviz -->
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="false"/>
 </launch>
