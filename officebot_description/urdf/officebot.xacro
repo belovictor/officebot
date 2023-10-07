@@ -54,7 +54,7 @@
         <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
     </joint>
     <!-- Lidar -->
-    <link name="rplidar_link">
+    <link name="unilidar_lidar">
         <inertial>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <mass value="0.1" />
@@ -75,9 +75,10 @@
         </collision>
     </link>
     <joint name="joint_sensor_laser" type="fixed">
-        <origin xyz="0 0 0.120" rpy="0 0 ${PI}"/>
+    <!-- ${PI} -->
+        <origin xyz="0.130 0.0 0.214" rpy="0 ${PI * 0.25} 0"/>
         <parent link="body_link"/>
-        <child link="rplidar_link"/>
+        <child link="unilidar_lidar"/>
     </joint>
     <!-- Camera-->
     <link name="camera_link">
