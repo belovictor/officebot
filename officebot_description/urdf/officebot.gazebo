@@ -5,12 +5,75 @@
     <xacro:property name="spinning_friction" value="0.1" />
     <xacro:property name="contact_stiffness" value="10000000.0" />
     <xacro:property name="contact_damping" value="1.0" />
+    <xacro:property name="PI" value="3.1415926"/>
     <!-- ros_control plugin -->
     <gazebo>
         <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
             <robotNamespace>/</robotNamespace>
             <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
         </plugin>
+    </gazebo>
+    <gazebo reference="unilidar_lidar">
+        <material>Gazebo/Black</material>
+        <sensor type="ray" name="unilidar">
+            <pose>0 0 0 0 0 0</pose>
+            <visualize>false</visualize>
+            <update_rate>30</update_rate>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>32</samples>
+                        <resolution>1</resolution>
+                        <min_angle>-${PI}</min_angle>
+                        <max_angle>${PI}</max_angle>
+                    </horizontal>
+                    <vertical>
+                        <samples>32</samples>
+                        <resolution>1</resolution>
+                        <min_angle>0.0</min_angle>
+                        <max_angle>${PI/2}</max_angle>
+                    </vertical>
+                </scan>
+                <range>
+                    <min>0.05</min>
+                    <max>70</max>
+                    <resolution>0.02</resolution>
+                </range>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.0</stddev>
+                </noise>
+            </ray>
+            <plugin name="unilidar" filename="libgazebo_ros_velodyne_laser.so">
+                <topicName>/unilidar/cloud</topicName>
+                <frameName>unilidar_lidar</frameName>
+            </plugin>
+        </sensor>
+    </gazebo>
+    <gazebo reference="joint_sensor_laser">
+    </gazebo>
+    <gazebo reference="unilidar_imu">
+    <gravity>true</gravity>
+        <sensor name="unilidar_imu" type="imu">
+            <always_on>true</always_on>
+            <update_rate>250</update_rate>
+            <visualize>true</visualize>
+            <topic>/unilidar/imu</topic>
+            <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+                <topicName>/unilidar/imu</topicName>
+                <bodyName>unilidar_imu</bodyName>
+                <updateRateHZ>250.0</updateRateHZ>
+                <gaussianNoise>0.0</gaussianNoise>
+                <xyzOffset>0 0 0</xyzOffset>
+                <rpyOffset>0 0 0</rpyOffset>
+                <frameName>unilidar_imu</frameName>
+                <initialOrientationAsReference>false</initialOrientationAsReference>
+            </plugin>
+            <pose>0 0 0 0 0 0</pose>
+        </sensor>
+    </gazebo>
+    <gazebo reference="joint_sensor_imu">
     </gazebo>
     <!-- Camera -->
     <!-- <gazebo reference="camera_link">
@@ -125,11 +188,11 @@
             <leftRearJoint>base_to_rear_left_wheel</leftRearJoint>
             <rightFrontJoint>base_to_front_right_wheel</rightFrontJoint>
             <rightRearJoint>base_to_rear_right_wheel</rightRearJoint>
-            <wheelSeparation>0.172</wheelSeparation>
-            <wheelDiameter>0.216</wheelDiameter>
+            <wheelSeparation>0.20</wheelSeparation>
+            <wheelDiameter>0.1167</wheelDiameter>
             <torque>10</torque>
             <MaxForce>5.0</MaxForce>
-            <commandTopic>cmd_vel</commandTopic>
+            <commandTopic>/officebot_drive_controller/cmd_vel</commandTopic>
             <odometryTopic>odom</odometryTopic>
             <odometryFrame>odom</odometryFrame>
             <odometrySource>world</odometrySource>
