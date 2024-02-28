@@ -1,0 +1,35 @@
+robot_radius: 0.25
+
+robot_base_frame: base_link
+
+resolution: 0.025
+
+obstacle_range: 0.5
+raytrace_range: 10.0
+
+#layer definitions
+static:
+  map_topic: /map
+
+obstacles:
+  observation_sources: /unilidar/scan ydlidar1
+
+  /unilidar/scan:
+    data_type: LaserScan
+    clearing: true
+    marking: true
+    topic: /unilidar/scan
+    inf_is_valid: true
+
+  ydlidar1:
+    data_type: LaserScan
+    clearing: true
+    marking: true
+    topic: /ylidar1/scan
+    inf_is_valid: true
+
+inflation:
+  inflation_radius: 0.5
+
+# fake_walls:
+#   map_topic: /abot_fake_map/map

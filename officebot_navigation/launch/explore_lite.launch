@@ -1,0 +1,10 @@
+<launch>
+  <arg name="id" default="officebot"  doc="Unique identifier of the robot [1-Inf.)"/>
+  <arg name="ns" default="" doc="Namespace of the robot. By default: create1."/>
+
+  <node pkg="explore_lite" type="explore" name="explore"
+        output="screen" respawn="false" >
+    <rosparam command="load" file="$(find officebot_navigation)/config/explore_lite.yaml"/>
+    <param name="robot_base_frame" value="$(arg ns)/base_link"/>
+  </node>
+</launch>

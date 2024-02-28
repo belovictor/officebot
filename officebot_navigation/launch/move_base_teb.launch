@@ -1,0 +1,17 @@
+<launch>
+	<arg name="cmd_vel_topic" default="/navigation/cmd_vel" />
+	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+		<param name="base_global_planner" value="global_planner/GlobalPlanner" />
+		<param name="planner_frequency" value="1.0" />
+		<param name="planner_patience" value="5.0" />
+		<param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+		<param name="controller_frequency" value="5.0" />
+		<param name="controller_patience" value="15.0" />
+  	  	<rosparam file="$(find officebot_navigation)/config/new/costmap_common_params.yaml" command="load" ns="global_costmap" />
+  	 	<rosparam file="$(find officebot_navigation)/config/new/costmap_common_params.yaml" command="load" ns="local_costmap" />
+  		<rosparam file="$(find officebot_navigation)/config/new/local_costmap_params.yaml" command="load" />
+  		<rosparam file="$(find officebot_navigation)/config/new/global_costmap_params.yaml" command="load" />
+  		<rosparam file="$(find officebot_navigation)/config/new/teb_local_planner_params.yaml" command="load" />
+		<remap from="cmd_vel" to="$(arg cmd_vel_topic)"/>
+	</node>
+</launch>

@@ -1,0 +1,12 @@
+
+resolution: 0.03
+frame_id: "odom"
+base_frame_id: "base_link"
+ensor_model/max_range: 20.0
+occupancy_min_z: 0.1
+occupancy_max_z: 0.5
+latch: false
+filter_ground: true
+ground_filter/distance: 0.05
+ground_filter/angle: 0.15
+ground_filter/plane_distance: 0.07

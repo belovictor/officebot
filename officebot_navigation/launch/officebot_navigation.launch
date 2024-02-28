@@ -1,0 +1,9 @@
+<launch>
+    <!-- <include file="$(find officebot_navigation)/launch/laserscan.launch" /> -->
+    <!-- <include file="$(find officebot_navigation)/launch/octomap_server.launch" /> -->
+    <!-- <include file="$(find officebot_navigation)/launch/move_base.launch" /> -->
+    <include file="$(find officebot_slam_toolbox)/launch/officebot_slam_toolbox.launch" />
+    <include file="$(find officebot_navigation)/launch/move_base_teb.launch" />
+    <!-- <include file="$(find officebot_navigation)/launch/ekf_localization.launch" /> -->
+    <!-- <include file="$(find officebot_navigation)/launch/explore_lite.launch" /> -->
+</launch>
