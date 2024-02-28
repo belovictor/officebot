@@ -1,6 +1,7 @@
 <launch>
 	<!-- <include file="$(find cloudrobo)/launch/cloudrobo.launch" /> -->
 	<!-- Args -->
+	<arg name="real_robot" default="true" />
 	<arg name="gui" default="false" />
     <arg name="rvizconfig" default="$(find officebot_description)/rviz/officebot_model.rviz" />
 	<arg name="model" default="$(find officebot_description)/urdf/officebot.xacro" />
@@ -10,7 +11,19 @@
 	<param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)"/>
 	<!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /> -->
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen" />
-	<include file="$(find ros_wheel_base)/launch/ros_wheel_base.launch" />
-	<include file="$(find officebot_control)/launch/officebot_control.launch" />
-	<include file="$(find ros_ddsm115_driver)/launch/ros_ddsm115_driver.launch" />
+	<node name="zero_vel_cmd_node" pkg="officebot_control" type="zero_vel_cmd_node.py">
+		<param name="publish_rate" value="10" />
+		<param name="publish_topic" value="/zero/cmd_vel" />
+	</node>
+	<node pkg="twist_mux" type="twist_mux" name="twist_mux" output="screen">
+		<remap from="cmd_vel_out" to="officebot_drive_controller/cmd_vel" />
+		<rosparam file="$(find officebot_control)/config/twist_mux.yaml" command="load" />
+	</node>
+	<include file="$(find officebot_bringup)/launch/officebot_filters.launch" />
+	<group if="$(arg real_robot)">
+		<include file="$(find ros_wheel_base)/launch/ros_wheel_base.launch" />
+		<include file="$(find officebot_control)/launch/officebot_control.launch" />
+		<include file="$(find ros_ddsm115_driver)/launch/ros_ddsm115_driver.launch" />
+		<include file="$(find rplidar_ros)/launch/rplidar_a1.launch" />
+	</group>
 </launch>

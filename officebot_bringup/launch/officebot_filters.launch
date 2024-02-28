@@ -1,0 +1,5 @@
+<launch>
+	<node name="rplidar_filter" pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen">
+        <rosparam file="$(find officebot_bringup)/config/rplidar_filters.yaml" />
+    </node>
+</launch>
