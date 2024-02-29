@@ -7,7 +7,7 @@
     <xacro:include filename="$(find officebot_description)/urdf/officebot.gazebo" />
     <xacro:property name="clearance" value="0.100" />
     <xacro:property name="body_height" value="0.17" />
-    <xacro:property name="wheel_radius" value="0.05835"/>
+    <xacro:property name="wheel_radius" value="0.05035"/>
     <xacro:property name="wheel_separation" value="0.243"/>
     <xacro:property name="wheel_distance" value="0.125"/>
     <xacro:property name="wheel_width" value="0.043"/>
