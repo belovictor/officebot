@@ -7,3 +7,6 @@
 [submodule "aws-robomaker-small-house-world"]
 	path = aws-robomaker-small-house-world
 	url = https://github.com/aws-robotics/aws-robomaker-small-house-world.git
+[submodule "witmotion_ros"]
+	path = witmotion_ros
+	url = https://github.com/ElettraSciComp/witmotion_IMU_ros.git
