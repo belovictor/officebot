@@ -1,6 +1,13 @@
 <launch>
-  <!-- Run the EKF Localization node -->
-  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
-        <rosparam command="load" file="$(find officebot_navigation)/config/ekf_localization.yaml"/>
-  </node>
+    <node name="imu_filter_node" pkg="imu_filter_madgwick" type="imu_filter_node">
+        <param name="use_mag" value="false" />
+        <param name="publish_tf" value="false" />
+        <param name="world_frame" value="enu" />
+        <remap from="/imu/data_raw" to="/imu" />
+        <remap from="/imu/data" to="/imu/filtered" />
+    </node>
+    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
+        <rosparam command="load" file="$(find rover6_navigation)/config/robot_localization.yaml" />
+        <!-- <remap from="odometry/filtered" to="odom" /> -->
+    </node>
 </launch>

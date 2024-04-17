@@ -26,5 +26,6 @@
 		<include file="$(find ros_ddsm115_driver)/launch/ros_ddsm115_driver.launch" />
 		<include file="$(find officebot_bringup)/launch/rplidar_a1.launch" />
 		<include file="$(find witmotion_ros)/launch/witmotion.launch" />
+		<include file="$(find officebot_navigation)/launch/ekf_localization.launch" />
 	</group>
 </launch>

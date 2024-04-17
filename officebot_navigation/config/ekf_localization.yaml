@@ -1,62 +1,39 @@
-#Configuration for EKF localization node
- 
-frequency: 10
-two_d_mode: true
-publish_tf: false
- 
-# Coordinate frame specification
 odom_frame: odom
 base_link_frame: base_link
 world_frame: odom
-#map_frame: map
- 
-# The odom0 configuration
+frequency: 50
+two_d_mode: true
+diagnostics_agg: true
+
+#x     , y     , z,
+#roll  , pitch , yaw,
+#vx    , vy    , vz,
+#vroll , vpitch, vyaw,
+#ax    , ay    , az
+
 odom0: /officebot_drive_controller/odom
 odom0_config: [false, false, false,
                false, false, false,
-               true,  true,  false,
+               true, true, true,
                false, false, true,
-               false, false, false,]
+               false, false, false]
+
 odom0_differential: false
- 
-# The imu0 configuration
-imu0: /unitree/imu/data
+# odom0_relative: false
+odom0_queue_size: 10
+
+imu0: /imu/filtered
+
+# NOTE: If you find that your robot has x drift,
+# the most likely candidate is the x'' (acceleration) fr$
+# Just set it to false! (It's the first entry on the las$
 imu0_config: [false, false, false,
+              true, true, true,
               false, false, false,
-              false, false, false,
-              false, false, true,
-              true,  false, false,]
-imu0_differential: false
- 
-process_noise_covariance: [0.05,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
-                              0, 0.05,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
-                              0,    0, 0.06,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
-                              0,    0,    0, 0.03,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
-                              0,    0,    0,    0, 0.03,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
-                              0,    0,    0,    0,    0, 0.06,    0,     0,     0,    0,    0,    0,    0,    0,    0,
-                              0,    0,    0,    0,    0,    0,0.025,     0,     0,    0,    0,    0,    0,    0,    0,
-                              0,    0,    0,    0,    0,    0,    0, 0.025,     0,    0,    0,    0,    0,    0,    0,
-                              0,    0,    0,    0,    0,    0,    0,     0,  0.04,    0,    0,    0,    0,    0,    0,
-                              0,    0,    0,    0,    0,    0,    0,     0,     0, 0.01,    0,    0,    0,    0,    0,
-                              0,    0,    0,    0,    0,    0,    0,     0,     0,    0, 0.01,    0,    0,    0,    0,
-                              0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0, 0.02,    0,    0,    0,
-                              0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0, 0.01,    0,    0,
-                              0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0, 0.01,    0,
-                              0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0, 0.015]
- 
- 
-initial_estimate_covariance: [1e-9,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
-                                 0, 1e-9,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
-                                 0,    0, 1e-9,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
-                                 0,    0,    0, 1e-9,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
-                                 0,    0,    0,    0, 1e-9,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
-                                 0,    0,    0,    0,    0, 1e-9,    0,    0,    0,    0,     0,     0,     0,    0,    0,
-                                 0,    0,    0,    0,    0,    0, 1e-9,    0,    0,    0,     0,     0,     0,    0,    0,
-                                 0,    0,    0,    0,    0,    0,    0, 1e-9,    0,    0,     0,     0,     0,    0,    0,
-                                 0,    0,    0,    0,    0,    0,    0,    0, 1e-9,    0,     0,     0,     0,    0,    0,
-                                 0,    0,    0,    0,    0,    0,    0,    0,    0, 1e-9,     0,     0,     0,    0,    0,
-                                 0,    0,    0,    0,    0,    0,    0,    0,    0,    0,  1e-9,     0,     0,    0,    0,
-                                 0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,  1e-9,     0,    0,    0,
-                                 0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,  1e-9,    0,    0,
-                                 0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0, 1e-9,    0,
-                                 0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0, 1e-9]
+              true, true, true,
+              false, false, false]
+
+imu0_differential: true
+# imu0_relative: true
+imu0_queue_size: 10
+imu0_remove_gravitational_acceleration: true
